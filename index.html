@@ -1,40 +1,84 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Shopping List</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        h1 {
             text-align: center;
-            padding: 20px;
+        }
+        #shoppingList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #shoppingList li {
+            background: #fff;
+            margin: 5px 0;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff1a1a;
         }
     </style>
 </head>
 <body>
-    <h1>Добро пожаловать в Telegram Web App!</h1>
-    <button id="sendData">Отправить данные в Telegram</button>
+
+    <h1>Shopping List</h1>
+    <input type="text" id="itemInput" placeholder="Add a new item..." />
+    <button id="addButton">Add</button>
+
+    <ul id="shoppingList"></ul>
 
     <script>
-        // Инициализация Telegram Web App
-        const tg = window.Telegram.WebApp;
+        const addButton = document.getElementById('addButton');
+        const itemInput = document.getElementById('itemInput');
+        const shoppingList = document.getElementById('shoppingList');
 
-        // Функция для отправки данных в Telegram
-        document.getElementById('sendData').onclick = function() {
-            const data = {
-                message: "Привет из вашего Web App!"
-            };
-            tg.sendData(JSON.stringify(data));
-        };
+        addButton.addEventListener('click', function() {
+            const itemText = itemInput.value.trim();
+            if (itemText) {
+                const li = document.createElement('li');
+                li.textContent = itemText;
 
-        // Обработка события нажатия кнопки
-        tg.ready();
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.addEventListener('click', function() {
+                    shoppingList.removeChild(li);
+                });
+
+                li.appendChild(removeButton);
+                shoppingList.appendChild(li);
+                itemInput.value = ''; // Clear the input
+            }
+        });
+
+        // Allow pressing Enter to add an item
+        itemInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                addButton.click();
+            }
+        });
     </script>
+
 </body>
 </html>
