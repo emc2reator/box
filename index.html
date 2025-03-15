@@ -1,83 +1,683 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping List</title>
+    <title>Список покупок</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            padding: 0;
-            background-color: #f4f4f4;
+			background-color: #d3d3d3; /* Светло-серый цвет */
+			/* background-color: white;  белый цвет */
         }
-        h1 {
-            text-align: center;
-        }
-        #shoppingList {
-            list-style-type: none;
-            padding: 0;
-        }
-        #shoppingList li {
-            background: #fff;
-            margin: 5px 0;
+        .button-container {
+            display: flex;
+            background-color: #add8e6; /* Голубой цвет */
             padding: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+			margin-bottom: 5px; /* Отступ снизу для разделения с текущим списком */
+        }
+        .button {
+            flex: 1; /* Занимает равное пространство */
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background-color: #ffffff; /* Белый фон для кнопок */
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #e0e0e0; /* Цвет при наведении */
+        }
+        #currentList, #history {
+            display: none;
+        }
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        button {
-            background-color: #ff4d4d;
-            color: white;
-            border: none;
+        #historyList button {
+            display: block; /* Каждая кнопка будет на новой строке */
+            margin: 5px 0; /* Отступы между кнопками */
+            width: 100%; /* Кнопки занимают всю ширину */
+        }
+		#createNewListButton {
+			width: 150px; /* Установите желаемую ширину */
+			height: 25px; /* Установите желаемую высоту */
+			padding: 5px 10px; /* Установите отступы по вертикали и горизонтали */
+			font-size: 12px; /* Установите размер шрифта, если нужно */
+			flex: 0 0 auto; /* Предотвращает растяжение кнопки */
+		}
+		#createNewItemButton {
+			width: 75px;
+			height: 25px; /* Установите желаемую высоту */
+			padding: 5px 10px; /* Установите отступы по вертикали и горизонтали */
+			font-size: 12px; /* Установите размер шрифта, если нужно */
+			flex: 0 0 auto; /* Предотвращает растяжение кнопки */
+		}
+		#currentListName {
+            font-style: italic; /* Устанавливаем курсив для имени текущего списка */
+        }
+		#newItem {
+            padding: 5px; /* Добавьте отступы для улучшения внешнего вида */
+            font-size: 14px; /* Установите размер шрифта, если нужно */
+            flex: 1; /* Занимает всё доступное пространство */
+		}
+		h1 {
+			margin-bottom: 5px;
+		}
+		h2 {
+			margin: 5px;
+		}
+		h3 {
+			margin: 5px;
+			padding: 10px;
+		}
+		.input-container {
+            display: flex; /* Используем flexbox для размещения кнопки и поля ввода на одной строке */
+            margin-top: 25px; /* Отступ сверху для разделения с предыдущими элементами */
+        }
+		#itemsList li {
+        margin-bottom: 10px; /* Увеличьте значение для большего расстояния */
+        line-height: 1.5; /* Увеличивает высоту строки */
+		}
+		
+		
+		ul {
+			list-style-type: none; /* Убираем стандартные маркеры */
+			padding: 0; /* Убираем отступы */
+		}
+
+		li {
+			margin: 5px 0; /* Отступы между элементами списка */
+			display: flex; /* Используем Flexbox для выравнивания */
+			align-items: center; /* Выравнивание по центру по вертикали */
+		}
+
+		button {
+			width: 35px; /* Фиксированная ширина */
+			height: 35px; /* Фиксированная высота */
+			font-size: 14px; /* Размер шрифта для пиктограммы */
+			border: none; /* Убираем рамку */
+			background: transparent; /* Прозрачный фон */
+			cursor: pointer; /* Указатель при наведении */
+			margin-right: 30px; /* Отступ между кнопкой и текстом */
+		}
+
+		button:hover {
+			background-color: rgba(0, 0, 0, 0.1); /* Легкий фон при наведении */
+		}
+
+		.modal {
+			display: none; /* Скрыто по умолчанию */
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgb(0,0,0);
+			background-color: rgba(0,0,0,0.4);
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 80%;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		}
+
+		.modal-button-container {
+            display: flex;
+            background-color: #ffffff; 
+            padding: 10px;
             border-radius: 5px;
-            padding: 5px 10px;
+            margin-top: 15px;
+			margin-bottom: 5px; /* Отступ снизу для разделения с текущим списком */
+		}
+
+		.modal-button {
+            flex: 1; /* Занимает равное пространство */
+            margin: 5px;
+            padding: 10px 15px;
             cursor: pointer;
-        }
-        button:hover {
-            background-color: #ff1a1a;
-        }
+            border: 1px solid #888;
+            background-color: #ffffff; /* Белый фон для кнопок */
+            border-radius: 5px;
+            transition: background-color 0.3s;
+		}
+
     </style>
 </head>
 <body>
 
-    <h1>Shopping List</h1>
-    <input type="text" id="itemInput" placeholder="Add a new item..." />
-    <button id="addButton">Add</button>
+    <h1>Списки покупок и дел</h1>
+    <div class="button-container">
+        <button class="button" onclick="showCurrentList()">Текущий список</button>
+        <button class="button" onclick="showHistory()">История списков</button>
+    </div>
 
-    <ul id="shoppingList"></ul>
+    <div id="currentList">
+        <div class="header">
+            <h2>Текущий список: </h2>
+            <button class="button" id="createNewListButton" onclick="createNewList()">Создать новый список</button>
+        </div>
+		<h3 id="currentListName"></h3> <!-- Элемент для отображения имени текущего списка -->
+        <ul id="itemsList">
+            <!-- Здесь будут отображаться элементы текущего списка -->
+        </ul>
+		<div class="input-container">
+            <input type="text" id="newItem" placeholder="Добавить новую позицию">
+            <button class="button" id="createNewItemButton" onclick="addItem()">Добавить</button>
+        </div>
+    </div>
 
+    <div id="history">
+        <h2>История списков</h2>
+        <div id="historyList">
+            <!-- Здесь будут отображаться кнопки истории списков -->
+        </div>
+    </div>
+	
+	<div id="customPrompt" class="modal">
+    <div class="modal-content">
+        <h2>Введите название нового списка:</h2>
+        <input type="text" id="listNameInput" placeholder="YYYY_MM_DD" style="width: 100%; font-size: 14px; margin-top: 25px;">
+        <div class="modal-button-container">
+            <button class="modal-button" onclick="submitListName()">ОК</button>
+            <button class="modal-button" onclick="closePrompt()">Отмена</button>
+        </div>
+    </div>
+	</div>
+	<div id="confirmDeleteModal" class="modal">
+		<div class="modal-content">
+			<h2>Подтверждение удаления</h2>
+			<p id="deleteItemMessage">Вы уверены, что хотите удалить этот элемент?</p>
+			<div class="modal-button-container">
+				<button class="modal-button" id="confirmDeleteButton">ОК</button>
+				<button class="modal-button" onclick="closeDeletePrompt()">Отмена</button>
+			</div>
+		</div>
+	</div>
+	<div id="confirmDeleteListModal" class="modal">
+    <div class="modal-content">
+        <h2>Подтверждение удаления списка</h2>
+        <p id="deleteListMessage">Вы уверены, что хотите удалить этот список?</p>
+        <div class="modal-button-container">
+            <button class="modal-button" id="confirmDeleteListButton">ОК</button>
+            <button class="modal-button" onclick="closeDeleteListPrompt()">Отмена</button>
+        </div>
+    </div>
+	</div>
+	
     <script>
-        const addButton = document.getElementById('addButton');
-        const itemInput = document.getElementById('itemInput');
-        const shoppingList = document.getElementById('shoppingList');
+	
+	
+	let currentListName = ''; // Глобальная переменная для хранения имени текущего списка
+	let itemToDelete = null; // Глобальная переменная для хранения элемента, который нужно удалить
+	
+	
+function loadHistoryListsFT() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const lists = JSON.parse(xhr.responseText);
+            const historyList = document.getElementById('historyList'); // Получаем элемент списка истории
+            historyList.innerHTML = ''; // Очищаем предыдущий список
+            currentListName = getCurrentDate(); // Получаем текущую дату в формате YYYY_MM_DD
+            let currentListExists = false; // Флаг для проверки существования текущего списка
 
-        addButton.addEventListener('click', function() {
-            const itemText = itemInput.value.trim();
-            if (itemText) {
+            console.log('Текущий список:', currentListName); // Отладочное сообщение
+
+            lists.forEach(function(list) {
+                // Создаем контейнер для кнопки и кнопки "корзина"
+                const listContainer = document.createElement('div');
+                listContainer.style.display = 'flex'; // Используем flexbox для выравнивания
+                listContainer.style.alignItems = 'center'; // Выравнивание по центру по вертикали
+
+                // Создаем кнопку "корзина"
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '🗑️'; // Используем эмодзи для значка корзины
+                deleteButton.className = 'delete-button'; // Добавляем класс для стилизации
+                deleteButton.style.width = '40px'; // Задаем фиксированную ширину для кнопки "корзина"
+                deleteButton.style.height = '40px'; // Задаем фиксированную высоту
+
+                deleteButton.onclick = function() {
+                    const listName = list.name; // Получаем имя списка для удаления
+                    console.log('Удаление списка:', listName);
+
+					const confirmation = confirm(`Вы уверены, что хотите удалить список "${listName}"?`);
+					if (!confirmation) {
+						return; // Если пользователь нажал "Отмена", выходим из функции
+					}
+
+                    // Отправляем AJAX-запрос для удаления списка
+                    const xhrDelete = new XMLHttpRequest();
+                    xhrDelete.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+                    xhrDelete.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhrDelete.onload = function() {
+                        if (xhrDelete.status === 200) {
+                            const response = JSON.parse(xhrDelete.responseText);
+                            if (response.success) {
+                                //alert(response.success); // Уведомляем об успешном удалении
+                                loadHistoryLists(); // Перезагружаем список, чтобы обновить интерфейс
+                            } else {
+                                //alert(response.error); // Уведомляем об ошибке
+                            }
+                        } else {
+                            console.error('Ошибка при удалении списка:', xhrDelete.statusText);
+                        }
+                    };
+                    xhrDelete.send('action=delete&name=' + encodeURIComponent(listName)); // Отправляем имя списка для удаления
+                };
+
+                const button = document.createElement('button'); // Создаем кнопку
+                button.textContent = list.name; // Устанавливаем текст кнопки
+                button.className = 'button'; // Добавляем класс для стилизации
+                button.style.width = '100px'; // Задаем фиксированную ширину для кнопки списка
+                button.style.height = '40px'; // Задаем фиксированную высоту
+
+                // Создаем контейнер для содержимого списка
+                const contentDiv = document.createElement('div');
+                contentDiv.style.display = 'none'; // Скрываем содержимое по умолчанию
+
+                // Добавляем обработчик события для кнопки
+                button.onclick = function() {
+                    // Переключаем видимость содержимого
+                    if (contentDiv.style.display === 'none') {
+                        contentDiv.style.display = 'block'; // Показываем содержимое
+                        viewList(list.name, contentDiv); // Загружаем содержимое списка
+                    } else {
+                        contentDiv.style.display = 'none'; // Скрываем содержимое
+                    }
+                };
+
+                // Добавляем кнопки в контейнер
+                listContainer.appendChild(deleteButton); // Добавляем кнопку "корзина"
+                listContainer.appendChild(button); // Добавляем кнопку списка
+                historyList.appendChild(listContainer); // Добавляем контейнер в список
+                historyList.appendChild(contentDiv); // Добавляем контейнер для содержимого
+
+                // Проверяем, совпадает ли имя списка с текущей датой
+                if (list.name === currentListName) {
+                    currentListExists = true; // Устанавливаем флаг, если список найден
+                }
+            });
+
+            // Если текущий список существует, показываем его
+            if (currentListExists) {
+                showCurrentList(); // Показываем текущий список
+                loadCurrentList(); // Загружаем элементы текущего списка
+            }
+        } else {
+            console.error('Ошибка при загрузке истории списков:', xhr.statusText);
+        }
+    };
+    xhr.send('action=getlists');
+}
+
+	
+function loadHistoryLists() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const lists = JSON.parse(xhr.responseText);
+            const historyList = document.getElementById('historyList'); // Получаем элемент списка истории
+            historyList.innerHTML = ''; // Очищаем предыдущий список
+            let currentListExists = false; // Флаг для проверки существования текущего списка
+
+            console.log('Текущий список:', currentListName); // Отладочное сообщение
+
+            lists.forEach(function(list) {
+                // Создаем контейнер для кнопок и кнопки списка
+                const listContainer = document.createElement('div');
+                listContainer.style.display = 'flex'; // Используем flexbox для выравнивания
+                listContainer.style.alignItems = 'center'; // Выравнивание по центру по вертикали
+                listContainer.style.justifyContent = 'space-between'; // Распределяем пространство между кнопками и названием списка
+
+                // Создаем кнопку "корзина"
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '🗑️'; // Используем эмодзи для значка корзины
+                deleteButton.className = 'delete-button'; // Добавляем класс для стилизации
+                deleteButton.style.width = '40px'; // Задаем фиксированную ширину для кнопки "корзина"
+                deleteButton.style.height = '40px'; // Задаем фиксированную высоту
+
+				deleteButton.onclick = function() {
+					const listName = list.name; // Получаем имя списка для удаления
+					console.log('Удаление списка:', listName);
+
+					// Отображаем модальное окно
+					const modal = document.getElementById('confirmDeleteListModal');
+					const deleteListMessage = document.getElementById('deleteListMessage');
+					const confirmDeleteListButton = document.getElementById('confirmDeleteListButton');
+
+					deleteListMessage.textContent = `Вы уверены, что хотите удалить список "${listName}"?`;
+					modal.style.display = "block";
+
+					// Обработчик для кнопки "ОК"
+					confirmDeleteListButton.onclick = function() {
+						// Отправляем AJAX-запрос для удаления списка
+						const xhrDelete = new XMLHttpRequest();
+						xhrDelete.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+						xhrDelete.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+						xhrDelete.onload = function() {
+							if (xhrDelete.status === 200) {
+								const response = JSON.parse(xhrDelete.responseText);
+								if (response.success) {
+									loadHistoryLists(); // Перезагружаем список, чтобы обновить интерфейс
+								} else {
+									//alert(response.error); // Уведомляем об ошибке
+								}
+							} else {
+								console.error('Ошибка при удалении списка:', xhrDelete.statusText);
+							}
+						};
+						xhrDelete.send('action=delete&name=' + encodeURIComponent(listName)); // Отправляем имя списка для удаления
+						modal.style.display = "none"; // Закрываем модальное окно
+					};
+				};
+
+                const button = document.createElement('button'); // Создаем кнопку
+                button.textContent = list.name; // Устанавливаем текст кнопки
+                button.className = 'button'; // Добавляем класс для стилизации
+                button.style.width = '100px'; // Задаем фиксированную ширину для кнопки списка
+                button.style.height = '40px'; // Задаем фиксированную высоту
+
+                // Создаем кнопку поиска
+                const searchButton = document.createElement('button');
+                searchButton.innerHTML = '🔎'; // Используем эмодзи для значка поиска
+                searchButton.className = 'search-button'; // Добавляем класс для стилизации
+                searchButton.style.width = '40px'; // Задаем фиксированную ширину для кнопки поиска
+                searchButton.style.height = '40px'; // Задаем фиксированную высоту
+
+				searchButton.onclick = function() {
+					//alert(list.name); // Показываем имя списка
+					currentListName = list.name; // Сохраняем имя текущего списка в глобальной переменной
+					showCurrentList(); // Показываем текущий список
+					loadCurrentList(); // Загружаем элементы текущего списка
+				};
+
+                // Создаем контейнер для содержимого списка
+                const contentDiv = document.createElement('div');
+                contentDiv.style.display = 'none'; // Скрываем содержимое по умолчанию
+
+                // Добавляем обработчик события для кнопки
+                button.onclick = function() {
+                    // Переключаем видимость содержимого
+                    if (contentDiv.style.display === 'none') {
+                        contentDiv.style.display = 'block'; // Показываем содержимое
+                        viewList(list.name, contentDiv); // Загружаем содержимое списка
+                    } else {
+                        contentDiv.style.display = 'none'; // Скрываем содержимое
+                    }
+                };
+
+                // Добавляем кнопки в контейнер
+                listContainer.appendChild(deleteButton); // Добавляем кнопку "корзина"
+                listContainer.appendChild(button); // Добавляем кнопку списка
+                listContainer.appendChild(searchButton); // Добавляем кнопку поиска
+                historyList.appendChild(listContainer); // Добавляем контейнер в список
+                historyList.appendChild(contentDiv); // Добавляем контейнер для содержимого
+
+                // Проверяем, совпадает ли имя списка с текущей датой
+                if (list.name === currentListName) {
+                    currentListExists = true; // Устанавливаем флаг, если список найден
+                }
+            });
+
+        } else {
+            console.error('Ошибка при загрузке истории списков:', xhr.statusText);
+        }
+    };
+    xhr.send('action=getlists');
+}
+
+// Функция для закрытия модального окна
+function closeDeleteListPrompt() {
+    const modal = document.getElementById('confirmDeleteListModal');
+    modal.style.display = "none"; // Закрываем модальное окно
+}
+
+// Закрытие модального окна при клике вне его
+window.onclick = function(event) {
+    const modal = document.getElementById('confirmDeleteListModal');
+    if (event.target === modal) {
+        closeDeleteListPrompt(); // Закрываем модальное окно
+    }
+};
+
+
+function loadCurrentList() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const items = JSON.parse(xhr.responseText);
+            const itemsList = document.getElementById('itemsList');
+            const currentListNameElement = document.getElementById('currentListName');
+            currentListNameElement.textContent = `${currentListName}`;
+            itemsList.innerHTML = ''; // Очищаем предыдущий список
+
+            items.forEach(function(item) {
                 const li = document.createElement('li');
-                li.textContent = itemText;
+                li.style.display = 'flex';
 
-                const removeButton = document.createElement('button');
-                removeButton.textContent = 'Remove';
-                removeButton.addEventListener('click', function() {
-                    shoppingList.removeChild(li);
-                });
+                // Создаем кнопку с пиктограммой ❌
+                const button = document.createElement('button');
+                button.textContent = '❌'; // Пиктограмма кнопки
+                button.style.width = '35px'; // Фиксированная ширина
+                button.style.height = '35px'; // Фиксированная высота
+                button.style.fontSize = '20px'; // Размер шрифта для пиктограммы
+                button.style.border = 'none'; // Убираем рамку
+                button.style.background = 'transparent'; // Прозрачный фон
+                button.style.cursor = 'pointer'; // Указатель при наведении
+                
+                // Обработчик клика для кнопки удаления
+                button.onclick = function(event) {
+                    event.stopPropagation(); // Предотвращаем всплытие события клика
+                    showDeletePrompt(item); // Открываем окно подтверждения удаления
+                };
 
-                li.appendChild(removeButton);
-                shoppingList.appendChild(li);
-                itemInput.value = ''; // Clear the input
+                // Добавляем обработчик клика для изменения значения buy
+                li.onclick = function() {
+                    toggleBuy(item.name, item.items, item.buy); // Передаем имя списка, наименование и текущее значение buy
+                };
+
+                // Добавляем кнопку в элемент списка
+                li.appendChild(button);
+
+                // Создаем элемент span для текста
+                const textNode = document.createElement('span');
+                textNode.textContent = item.items;
+
+                if (item.buy === 1) {
+                    textNode.style.textDecoration = 'line-through'; // Зачеркиваем текст
+                }
+
+                // Добавляем текст в элемент списка
+                li.appendChild(textNode);
+                itemsList.appendChild(li);
+            });
+        } else {
+            console.error('Ошибка при загрузке текущего списка:', xhr.statusText);
+        }
+    };
+    xhr.send('action=update&name=' + encodeURIComponent(currentListName)); // Используем глобальную переменную
+}
+
+// Функция для закрытия окна подтверждения удаления
+function closeDeletePrompt() {
+    document.getElementById("confirmDeleteModal").style.display = "none"; // Скрываем модальное окно подтверждения удаления
+    itemToDelete = null; // Сбрасываем элемент, который нужно удалить
+}
+
+// Функция для подтверждения удаления элемента
+document.getElementById("confirmDeleteButton").onclick = function() {
+    if (itemToDelete) {
+        // Логика для удаления элемента
+        const deleteXhr = new XMLHttpRequest();
+        deleteXhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+        deleteXhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        deleteXhr.onload = function() {
+            if (deleteXhr.status === 200) {
+                const response = JSON.parse(deleteXhr.responseText);
+                console.log(response.success || response.error);
+                // Перезагружаем список после удаления
+                loadCurrentList();
+            } else {
+                console.error('Ошибка при удалении элемента:', deleteXhr.statusText);
             }
-        });
+        };
+        deleteXhr.send('action=delitem&name=' + encodeURIComponent(currentListName) + '&item=' + encodeURIComponent(itemToDelete.items));
+        closeDeletePrompt(); // Закрываем модальное окно после удаления
+    }
+};
 
-        // Allow pressing Enter to add an item
-        itemInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                addButton.click();
-            }
-        });
+// Функция для открытия окна подтверждения удаления
+function showDeletePrompt(item) {
+    itemToDelete = item; // Сохраняем элемент, который нужно удалить
+    document.getElementById("deleteItemMessage").textContent = `Удаляем "${item.items}"?`; // Устанавливаем сообщение
+    closePrompt(); // Закрываем окно для ввода имени, если оно открыто
+    document.getElementById("confirmDeleteModal").style.display = "block"; // Показываем модальное окно подтверждения
+}
+
+        function getCurrentDate() {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}_${month}_${day}`; // Возвращаем дату в формате YYYY_MM_DD
+        }
+
+        // Вызов функции при загрузке страницы
+        window.onload = function() {
+            loadHistoryListsFT(); // Загружаем историю списков при открытии страницы
+			setInterval(loadCurrentList, 10000);
+        };
+
+        function showCurrentList() {
+            document.getElementById('currentList').style.display = 'block';
+            document.getElementById('history').style.display = 'none';
+            loadCurrentList(); // Загружаем текущий список
+        }
+
+        function showHistory() {
+            document.getElementById('currentList').style.display = 'none';
+            document.getElementById('history').style.display = 'block';
+            loadHistoryLists(); // Загружаем историю списков
+        }
+
+
+
+		function addItem() {
+			const newItem = document.getElementById('newItem').value;
+			if (newItem) {
+				const xhr = new XMLHttpRequest();
+				xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); // Изменено на application/x-www-form-urlencoded
+				xhr.onload = function() {
+					if (xhr.status === 200) {
+						const response = JSON.parse(xhr.responseText);
+						if (response.success) {
+							loadCurrentList(); // Обновляем текущий список
+							document.getElementById('newItem').value = ''; // Очистить поле ввода
+						} else {
+							console.error('Ошибка:', response.error);
+						}
+					} else {
+						console.error('Ошибка при добавлении элемента:', xhr.statusText);
+					}
+				};
+				const listName = currentListName; // Используем текущую дату как имя списка
+				const data = `action=newitem&name=${encodeURIComponent(listName)}&item=${encodeURIComponent(newItem)}&buy=0`;
+				xhr.send(data); // Отправляем данные в формате x-www-form-urlencoded
+			}
+		}
+
+        function toggleBuy(name, item, currentBuyValue) {
+            const newBuyValue = currentBuyValue === 1 ? 0 : 1; // Меняем значение buy
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        loadCurrentList(); // Обновляем текущий список
+                    } else {
+                        console.error('Ошибка:', response.error);
+                    }
+                } else {
+                    console.error('Ошибка при изменении значения buy:', xhr.statusText);
+                }
+            };
+            const listName = currentListName; // Используем текущую дату как имя списка
+            xhr.send(`action=togglebuy&name=${encodeURIComponent(listName)}&item=${encodeURIComponent(item)}&buy=${newBuyValue}`);
+        }
+
+		function createNewList() {
+			const currentDate = getCurrentDate(); // Получаем текущую дату в формате YYYY_MM_DD
+			document.getElementById("listNameInput").value = currentDate; // Устанавливаем текущую дату как значение по умолчанию
+			document.getElementById("customPrompt").style.display = "block"; // Показываем модальное окно
+		}
+
+		function closePrompt() {
+			document.getElementById("customPrompt").style.display = "none"; // Скрываем модальное окно
+		}
+
+		function submitListName() {
+			const newListName = document.getElementById("listNameInput").value; // Получаем значение из поля ввода
+			if (newListName) { // Проверяем, что имя не пустое
+				currentListName = newListName; // Присваиваем новое имя глобальной переменной
+				// alert(`Имя текущего списка изменено на: ${currentListName}`); // Уведомляем пользователя
+				closePrompt(); // Закрываем модальное окно
+				showCurrentList(); // Показываем текущий список
+				loadCurrentList(); // Загружаем элементы текущего списка
+			} else {
+				//alert("Пожалуйста, введите имя списка."); // Уведомляем, если имя пустое
+			}
+		}
+
+function viewList(listName, contentDiv) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const items = JSON.parse(xhr.responseText);
+            contentDiv.innerHTML = ''; // Очищаем предыдущий список
+            const ul = document.createElement('ul'); // Создаем элемент списка
+            items.forEach(function(item) {
+                const li = document.createElement('li');
+                li.textContent = item.items; // Предполагается, что поле называется 'items'
+                if (item.buy === 1) {
+                    li.style.textDecoration = 'line-through'; // Зачеркиваем текст
+                }
+                li.style.paddingLeft = '55px'; // Устанавливаем отступ слева в 20 пикселей
+                // Или используйте li.style.marginLeft = '20px'; для внешнего отступа
+                ul.appendChild(li); // Добавляем элемент списка в ul
+            });
+            contentDiv.appendChild(ul); // Добавляем ul в contentDiv
+        } else {
+            console.error('Ошибка при загрузке списка:', xhr.statusText);
+        }
+    };
+    xhr.send('action=update&name=' + encodeURIComponent(listName));
+}
     </script>
+
 </body>
 </html>
+                       
