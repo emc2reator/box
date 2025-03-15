@@ -226,7 +226,7 @@
 	
 function loadHistoryListsFT() {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+    xhr.open('POST', 'https://WEBSITE/api/lists.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
         if (xhr.status === 200) {
@@ -262,7 +262,7 @@ function loadHistoryListsFT() {
 
                     // Отправляем AJAX-запрос для удаления списка
                     const xhrDelete = new XMLHttpRequest();
-                    xhrDelete.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+                    xhrDelete.open('POST', 'https://WEBSITE/api/lists.php', true);
                     xhrDelete.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhrDelete.onload = function() {
                         if (xhrDelete.status === 200) {
@@ -328,7 +328,7 @@ function loadHistoryListsFT() {
 	
 function loadHistoryLists() {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+    xhr.open('POST', 'https://WEBSITE/api/lists.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
         if (xhr.status === 200) {
@@ -369,7 +369,7 @@ function loadHistoryLists() {
 					confirmDeleteListButton.onclick = function() {
 						// Отправляем AJAX-запрос для удаления списка
 						const xhrDelete = new XMLHttpRequest();
-						xhrDelete.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+						xhrDelete.open('POST', 'https://WEBSITE/api/lists.php', true);
 						xhrDelete.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 						xhrDelete.onload = function() {
 							if (xhrDelete.status === 200) {
@@ -460,7 +460,7 @@ window.onclick = function(event) {
 
 function loadCurrentList() {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+    xhr.open('POST', 'https://WEBSITE/api/lists.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
         if (xhr.status === 200) {
@@ -528,7 +528,7 @@ document.getElementById("confirmDeleteButton").onclick = function() {
     if (itemToDelete) {
         // Логика для удаления элемента
         const deleteXhr = new XMLHttpRequest();
-        deleteXhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+        deleteXhr.open('POST', 'https://WEBSITE/api/lists.php', true);
         deleteXhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         deleteXhr.onload = function() {
             if (deleteXhr.status === 200) {
@@ -585,7 +585,7 @@ function showDeletePrompt(item) {
 			const newItem = document.getElementById('newItem').value;
 			if (newItem) {
 				const xhr = new XMLHttpRequest();
-				xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+				xhr.open('POST', 'https://WEBSITE/api/lists.php', true);
 				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); // Изменено на application/x-www-form-urlencoded
 				xhr.onload = function() {
 					if (xhr.status === 200) {
@@ -609,7 +609,7 @@ function showDeletePrompt(item) {
         function toggleBuy(name, item, currentBuyValue) {
             const newBuyValue = currentBuyValue === 1 ? 0 : 1; // Меняем значение buy
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+            xhr.open('POST', 'https://WEBSITE/api/lists.php', true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
                 if (xhr.status === 200) {
@@ -652,7 +652,7 @@ function showDeletePrompt(item) {
 
 function viewList(listName, contentDiv) {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://linklocal.42web.io/api/lists.php', true);
+    xhr.open('POST', 'https://WEBSITE/api/lists.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
         if (xhr.status === 200) {
