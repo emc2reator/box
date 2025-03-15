@@ -5,5 +5,5 @@ testboxpowerfullmagic
 
 duck[.]ai helps a lot
 
-To use it change credentials in db.php and WEBSITE to your side in index.html.
+To use it change credentials in db.php and WEBSITE to your site in index.html.
 
